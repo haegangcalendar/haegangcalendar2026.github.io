@@ -1,0 +1,1226 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9613232970622067"
+     crossorigin="anonymous"></script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>2026학년도 학사일정</title>
+  <link rel="icon" type="image/png" href="./calendar-logo (final).png" />
+  <style>
+    @font-face{
+      font-family: 'Noto Sans KR Custom';
+      src: url('./NotoSansKR-VariableFont_wght.ttf') format('truetype');
+      font-weight: 100 900;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    :root{
+      --bg:#ffffff;
+      --panel:#ffffff;
+      --text:#111827;
+      --muted:#6b7280;
+      --line:#d1d5db;
+      --accent:#2563eb;
+
+      --cellBg:#ffffff;
+      --cellAlt:#fafafa;
+      --pillBg:#eef2ff;
+
+      --today:#BDC0C0;
+      --shadow: 0 10px 30px rgba(15,23,42,.08);
+
+      --fs-title:18px;
+      --fs-ui:12px;
+      --fs-dow:12px;
+      --fs-day:12px;
+      --fs-item:12px;
+
+      --pad-wrap:10px;
+      --pad-card:10px;
+
+      --cell-minh:112px;
+      --cell-pad:10px;
+
+      --bar-top:30px;
+      --bar-h:20px;
+      --bar-gap:4px;
+      --bar-row-h:24px;
+
+      --modal-max-h:78vh;
+      --weekend-red:#dc2626;
+    }
+
+    @media (max-width: 520px){
+      :root{
+        --fs-title:16px;
+        --fs-ui:11px;
+        --fs-dow:11px;
+        --fs-day:11px;
+        --fs-item:11px;
+
+        --pad-wrap:8px;
+        --pad-card:8px;
+
+        --cell-minh:90px;
+        --cell-pad:8px;
+
+        --bar-top:28px;
+        --bar-h:18px;
+        --bar-gap:3px;
+        --bar-row-h:21px;
+
+        --modal-max-h:84vh;
+      }
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: 'Noto Sans KR Custom', 'Noto Sans KR', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    button, input, select, textarea{
+      font-family: 'Noto Sans KR Custom', 'Noto Sans KR', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+    }
+
+    header{
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: var(--bg);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .wrap{max-width: 1600px; margin:0 auto; padding: var(--pad-wrap);}
+    .top{
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+    h1{margin:0; font-size: var(--fs-title); letter-spacing:-.3px; line-height:1.1;}
+    .notice{
+      margin:6px 0 0 0;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.35;
+      white-space: pre-line;
+    }
+
+    .toolbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top:10px;
+    }
+    .controls{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+
+    .btn{
+      border:1px solid var(--line);
+      background: transparent;
+      color: var(--text);
+      padding:7px 10px;
+      border-radius:10px;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      user-select:none;
+      font-size: var(--fs-ui);
+      white-space:nowrap;
+    }
+    .btn:active{transform: translateY(1px)}
+    .btn.primary{
+      border-color: color-mix(in oklab, var(--accent) 55%, var(--line));
+      box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 12%, transparent) inset;
+    }
+
+    select, .input{
+      border:1px solid var(--line);
+      background: transparent;
+      color: var(--text);
+      padding:7px 10px;
+      border-radius:10px;
+      outline:none;
+      font-size: var(--fs-ui);
+      max-width: 320px;
+    }
+    .input::placeholder{color: var(--muted)}
+    option{color:#111827}
+
+    main{padding-bottom: 22px;}
+
+    .monthCard{
+      background: var(--panel);
+      border:1px solid var(--line);
+      border-radius:16px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      margin: 10px 0;
+    }
+
+    .monthbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      padding:10px 12px;
+      border-bottom:1px solid var(--line);
+      background: #fff;
+    }
+    .monthbar .m{
+      font-weight:900;
+      letter-spacing:-.3px;
+      font-size: var(--fs-ui);
+    }
+
+    .calendar{padding: var(--pad-card);}
+
+    .dow{
+      display:grid;
+      grid-template-columns: repeat(7, 1fr);
+      border:1px solid var(--line);
+      border-bottom:0;
+      border-radius:12px 12px 0 0;
+      overflow:hidden;
+    }
+    .dow div{
+      padding:6px 6px;
+      font-size: var(--fs-dow);
+      color: var(--muted);
+      border-right:1px solid var(--line);
+      background: var(--cellAlt);
+    }
+    .dow div:last-child{border-right:0}
+    .dow div.weekend{color: var(--weekend-red); font-weight:700;}
+
+    .weeks{
+      border:1px solid var(--line);
+      border-top:0;
+      border-radius:0 0 12px 12px;
+      overflow:hidden;
+    }
+
+    .week{
+      position: relative;
+      display:grid;
+      grid-template-columns: repeat(7, 1fr);
+      border-top:1px solid var(--line);
+      background: var(--cellBg);
+      --bar-rows: 0;
+    }
+    .week:first-child{border-top:0}
+
+    .bars{
+      position:absolute;
+      left:0; right:0;
+      top: var(--bar-top);
+      padding: 0 var(--cell-pad);
+      display:grid;
+      grid-template-columns: repeat(7, 1fr);
+      grid-auto-rows: var(--bar-h);
+      row-gap: var(--bar-gap);
+      pointer-events:none;
+      z-index: 3;
+    }
+    .bar{
+      height: var(--bar-h);
+      border-radius:999px;
+      border:1px solid color-mix(in oklab, var(--line) 70%, transparent);
+      background: color-mix(in oklab, var(--pillBg) 70%, transparent);
+      display:flex;
+      align-items:center;
+      gap:6px;
+      padding:0 8px;
+      overflow:hidden;
+      white-space:nowrap;
+      pointer-events:auto;
+      min-width:0;
+      margin: 0 1px;
+      line-height:1;
+    }
+    .bar .dot{width:8px; height:8px; border-radius:50%; background: var(--accent); flex:0 0 auto;}
+    .bar .txt{min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size: var(--fs-item); font-weight:800;}
+
+    .cell{
+      position:relative;
+      min-height: var(--cell-minh);
+      padding: var(--cell-pad);
+      padding-top: calc(var(--cell-pad) + 18px + (var(--bar-rows) * var(--bar-row-h)));
+      border-right:1px solid var(--line);
+      background: var(--cellBg);
+      overflow:hidden;
+      z-index: 1;
+      cursor: pointer;
+    }
+    .cell:nth-child(odd){background: var(--cellAlt)}
+    .cell:last-child{border-right:0}
+    .cell.muted{opacity:.45}
+
+    .cell.today{
+      background: var(--today) !important;
+      box-shadow: inset 0 0 0 2px rgba(17,24,39,.18);
+    }
+
+    .cellTop{
+      position:absolute;
+      top: 4px;
+      left: var(--cell-pad);
+      right: var(--cell-pad);
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      color: var(--muted);
+      font-size: var(--fs-day);
+      pointer-events:none;
+      z-index: 2;
+    }
+    .cellTop .dayNum{font-weight:900; color:#111827;}
+    .cell.muted .cellTop .dayNum{color:#6b7280;}
+    .cell.weekend .cellTop .dayNum{color: var(--weekend-red) !important;}
+    .cell.muted.weekend .cellTop .dayNum{color: var(--weekend-red) !important;}
+
+    .cellList{
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+      min-width:0;
+      z-index: 1;
+      position: relative;
+      pointer-events:none;
+    }
+
+    .item{
+      display:flex;
+      align-items:center;
+      gap:6px;
+      min-width:0;
+      padding:4px 6px;
+      border-radius:10px;
+      border:1px solid color-mix(in oklab, var(--line) 70%, transparent);
+      background: color-mix(in oklab, var(--pillBg) 55%, transparent);
+      font-size: var(--fs-item);
+      overflow:hidden;
+      white-space:nowrap;
+      line-height:1.1;
+    }
+    .item .dot{width:7px; height:7px; border-radius:50%; background: var(--accent); flex:0 0 auto;}
+    .item .t{min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-weight:700;}
+
+    .dayWrap{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      margin-top: 10px;
+    }
+    .dayCard{
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:16px;
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .dayHeader{
+      padding:10px 12px;
+      border-bottom:1px solid var(--line);
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .dayHeader .d{
+      font-weight:900;
+      font-size: 13px;
+      letter-spacing: -.2px;
+    }
+    .dayList{
+      padding:10px 12px 12px 12px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+    .dayRow{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:10px 12px;
+      background:#fafafa;
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      justify-content:space-between;
+    }
+    .dayRow .left{min-width:0}
+    .dayRow .name{
+      font-weight:800;
+      font-size:12px;
+      word-break:break-word;
+    }
+    .dayRow .meta{
+      margin-top:4px;
+      color:var(--muted);
+      font-size:11px;
+      word-break:break-word;
+    }
+
+    .modalOverlay{
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.35);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 200;
+    }
+    .modalOverlay.open{ display:flex; }
+
+    .modal{
+      width: min(920px, 96vw);
+      max-height: var(--modal-max-h);
+      overflow: hidden;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.25);
+      display:flex;
+      flex-direction: column;
+    }
+    .modalHeader{
+      display:flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+    }
+    .modalHeader .title{
+      font-weight: 900;
+      font-size: 13px;
+      letter-spacing: -.2px;
+    }
+    .modalBody{
+      padding: 10px 14px 14px 14px;
+      overflow: auto;
+    }
+    .modalHint{
+      color: var(--muted);
+      font-size: 11px;
+      margin: 0 0 10px 0;
+      white-space: pre-line;
+    }
+    .resultList{
+      display:flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .resultRow{
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 10px 12px;
+      background: #fafafa;
+      display:flex;
+      gap: 10px;
+      align-items: flex-start;
+      justify-content: space-between;
+    }
+    .resultRow .left{min-width:0}
+    .resultRow .date{
+      font-weight: 900;
+      font-size: 12px;
+      margin-bottom: 4px;
+    }
+    .resultRow .name{
+      font-size: 12px;
+      font-weight: 700;
+      word-break: break-word;
+    }
+    .resultRow .tag{
+      font-size: 11px;
+      color: var(--muted);
+      white-space: nowrap;
+      padding-left: 8px;
+    }
+    .linkBtn{
+      border:1px solid var(--line);
+      background:#fff;
+      color: var(--text);
+      padding: 6px 9px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    @media print{
+      header{display:none !important}
+      .monthCard,.dayCard{box-shadow:none}
+      .modalOverlay{display:none !important}
+      body{background:#fff}
+    }
+  </style>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9613232970622067"
+     crossorigin="anonymous"></script>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="top">
+      <div>
+        <h1>2026학년도 학사일정</h1>
+        <div class="notice">이 웹사이트는 PC환경에서 최적화 되어 있습니다
+마지막 수정 : 2026.03.10</div>
+      </div>
+    </div>
+
+    <div class="toolbar">
+      <div class="controls" id="leftControls"></div>
+
+      <div class="controls">
+        <button class="btn" id="openListBtn" title="리스트 보기">☰ 리스트</button>
+        <input id="globalSearch" class="input" placeholder="2026 전체 검색" />
+      </div>
+
+      <div class="controls">
+        <button class="btn primary" id="printBtn">🖨 인쇄</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <div id="monthsRoot"></div>
+    <div id="dayRoot" style="display:none;"></div>
+  </div>
+</main>
+
+<div class="modalOverlay" id="modalOverlay" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true" aria-label="일정 리스트">
+    <div class="modalHeader">
+      <div class="title" id="modalTitle">일정 리스트</div>
+      <div style="display:flex; gap:8px; align-items:center;">
+        <button class="linkBtn" id="modalScrollTop">맨 위</button>
+        <button class="btn" id="modalCloseBtn">닫기 ✕</button>
+      </div>
+    </div>
+    <div class="modalBody">
+      <p class="modalHint" id="modalHint">전체 일정이 날짜 순으로 표시됩니다.</p>
+      <div class="resultList" id="modalList"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const RANGE_START = "2026-03-01";
+const RANGE_END   = "2027-02-19";
+
+const EVENTS_RAW = [
+  { date:"2026-03-02", title:"대체공휴일" },
+
+{ date:"2026-03-03", title:"개학식" },
+{ date:"2026-03-03", title:"입학식" },
+
+{ date:"2026-03-04", title:"진로자아체험(2,3학년)" },
+
+{ date:"2026-03-05", title:"학교폭력 및 사이버폭력 예방교육" },
+{ date:"2026-03-05", title:"생명존중 및 자살예방교육" },
+
+{ date:"2026-03-06", title:"동아리" },
+
+{ date:"2026-03-09", title:"봉사소양교육" },
+{ date:"2026-03-09", title:"성폭력·성희롱·성매매 예방교육" },
+
+{ date:"2026-03-12", title:"학급회 조직" },
+
+{ date:"2026-03-20", title:"학부모총회" },
+
+{ date:"2026-03-24", title:"학생인권교육" },
+{ date:"2026-03-24", title:"다문화교육" },
+
+{ date:"2026-03-31", title:"1학년 영어듣기평가" },
+{ date:"2026-04-01", title:"2학년 영어듣기평가" },
+{ date:"2026-04-02", title:"3학년 영어듣기평가" },
+
+{ date:"2026-04-06", title:"과학의 날 행사" },
+
+{ date:"2026-04-08", title:"인터넷·스마트폰 과의존 예방교육" },
+
+{ start:"2026-04-21", end:"2026-04-22", title:"중간고사(2,3학년)" },
+
+{ date:"2026-04-24", title:"동아리" },
+
+{ date:"2026-04-30", title:"재난대피훈련" },
+
+{ date:"2026-05-04", title:"재량휴업일(개교기념일)" },
+
+{ date:"2026-05-05", title:"어린이날" },
+
+{ date:"2026-05-06", title:"체험학습 및 야외활동 안전교육" },
+
+{ start:"2026-05-07", end:"2026-05-08", title:"현장체험학습" },
+
+{ date:"2026-05-14", title:"사이버폭력 예방교육" },
+
+{ date:"2026-05-15", title:"어울림한마당" },
+
+{ date:"2026-05-25", title:"부처님오신날 대체공휴일" },
+
+{ date:"2026-05-26", title:"약물 오남용 예방교육" },
+
+{ date:"2026-05-28", title:"동아리" },
+
+{ date:"2026-06-03", title:"지방선거일" },
+
+{ date:"2026-06-10", title:"장애인권교육" },
+
+{ start:"2026-06-23", end:"2026-06-25", title:"기말고사(2,3학년)" },
+
+{ date:"2026-06-26", title:"동아리" },
+
+{ date:"2026-07-02", title:"사이버 도박 예방교육" },
+
+{ date:"2026-07-17", title:"제헌절" },
+
+{ date:"2026-07-20", title:"방학식" },
+
+{ start:"2026-07-21", end:"2026-08-17", title:"여름방학" },
+
+{ date:"2026-08-17", title:"대체공휴일" },
+
+{ date:"2026-08-18", title:"2학기 개학식" },
+{ date:"2026-08-18", title:"대청소" },
+{ date:"2026-08-18", title:"봉사활동교육" },
+
+{ date:"2026-08-24", title:"언어폭력 및 사이버폭력 예방교육" },
+
+{ date:"2026-08-25", title:"인터넷·스마트폰 과의존 예방교육" },
+
+{ date:"2026-08-28", title:"동아리" },
+
+{ date:"2026-09-01", title:"1학년 영어듣기평가" },
+{ date:"2026-09-02", title:"2학년 영어듣기평가" },
+{ date:"2026-09-03", title:"3학년 영어듣기평가" },
+
+{ date:"2026-09-08", title:"생명존중 및 자살예방교육" },
+
+{ date:"2026-09-14", title:"사이버 도박 예방교육" },
+
+{ date:"2026-09-22", title:"아동학대 및 가정폭력 예방교육" },
+{ date:"2026-09-22", title:"학생인권교육" },
+{ date:"2026-09-22", title:"다문화교육" },
+{ date:"2026-09-22", title:"동아리" },
+
+{ date:"2026-09-23", title:"진로탐색의 날" },
+{ date:"2026-09-23", title:"대청소" },
+
+{ start:"2026-09-24", end:"2026-09-26", title:"추석연휴" },
+
+{ date:"2026-09-30", title:"한글날 백일장" },
+{ date:"2026-09-30", title:"미세먼지 예방교육" },
+
+{ date:"2026-10-05", title:"대체공휴일" },
+
+{ date:"2026-10-08", title:"재량휴업일" },
+
+{ date:"2026-10-09", title:"한글날" },
+
+{ date:"2026-10-13", title:"양성평등 및 성폭력 예방교육" },
+
+{ date:"2026-10-23", title:"진학설명회" },
+
+{ date:"2026-10-26", title:"자기주도학습(2학년)" },
+
+{ start:"2026-10-27", end:"2026-10-29", title:"중간고사(1,2학년)" },
+{ start:"2026-10-27", end:"2026-10-29", title:"기말고사(3학년)" },
+
+{ date:"2026-11-09", title:"인성자람 체험(1학년)" },
+{ date:"2026-11-10", title:"인성자람 체험(1학년)" },
+
+{ date:"2026-11-11", title:"재난대피훈련" },
+
+{ date:"2026-11-19", title:"수능일" },
+
+{ start:"2026-12-07", end:"2026-12-09", title:"기말고사(1,2학년)" },
+
+{ date:"2026-12-10", title:"동아리" },
+
+{ date:"2026-12-16", title:"학예전" },
+
+{ date:"2026-12-21", title:"장애인권 및 장애이해교육" },
+
+{ date:"2026-12-25", title:"크리스마스" },
+
+{ date:"2026-12-30", title:"1~4교시 수업 담임시간" },
+{ date:"2026-12-30", title:"겨울방학식" },
+
+{ start:"2026-12-31", end:"2027-01-27", title:"겨울방학" },
+
+{ date:"2027-01-28", title:"개학식" },
+
+{ date:"2027-02-02", title:"종업식" },
+{ date:"2027-02-02", title:"졸업식" },
+
+{ start:"2027-02-03", end:"2027-03-01", title:"학년말방학" }
+];
+
+const DOW = ["일","월","화","수","목","금","토"];
+const monthsRoot = document.getElementById("monthsRoot");
+const dayRoot = document.getElementById("dayRoot");
+const leftControls = document.getElementById("leftControls");
+
+function pad2(n){ return String(n).padStart(2,"0"); }
+function toISODate(d){ return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`; }
+function parseISO(iso){ const [y,m,d]=iso.split("-").map(Number); return new Date(y, m-1, d); }
+function ymKey(d){ return `${d.getFullYear()}-${pad2(d.getMonth()+1)}`; }
+function formatYM(d){ return `${d.getFullYear()}.${pad2(d.getMonth()+1)}`; }
+function formatYMD(d){
+  const dt = (typeof d === "string") ? parseISO(d) : d;
+  return `${dt.getFullYear()}.${pad2(dt.getMonth()+1)}.${pad2(dt.getDate())}`;
+}
+function escapeHtml(s){
+  return String(s||"").replace(/[&<>"']/g, (m)=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+  })[m]);
+}
+function normalized(s){ return (s||"").toLowerCase().trim(); }
+function addDays(dateObj, n){ const d=new Date(dateObj); d.setDate(d.getDate()+n); return d; }
+function weekStartOf(dateObj){
+  const d = new Date(dateObj);
+  const dow = d.getDay();
+  d.setDate(d.getDate() - dow);
+  d.setHours(0,0,0,0);
+  return d;
+}
+function clampToRange(d){
+  const min = parseISO(RANGE_START);
+  const max = parseISO(RANGE_END);
+  if(d < min) return min;
+  if(d > max) return max;
+  return d;
+}
+function isRangeEvent(e){ return !!(e.start && e.end); }
+function inRangeDate(iso){
+  const t = parseISO(iso).getTime();
+  return t >= parseISO(RANGE_START).getTime() && t <= parseISO(RANGE_END).getTime();
+}
+function clipEventsToRange(events){
+  const out = [];
+  const minT = parseISO(RANGE_START).getTime();
+  const maxT = parseISO(RANGE_END).getTime();
+
+  for(const e of events){
+    if(isRangeEvent(e)){
+      let a = parseISO(e.start).getTime();
+      let b = parseISO(e.end).getTime();
+      if(b < minT || a > maxT) continue;
+      a = Math.max(a, minT);
+      b = Math.min(b, maxT);
+      const start = toISODate(new Date(a));
+      const end = toISODate(new Date(b));
+      if(parseISO(start) > parseISO(end)) continue;
+      out.push({ start, end, title: e.title });
+    }else{
+      if(!inRangeDate(e.date)) continue;
+      out.push({ date: e.date, title: e.title });
+    }
+  }
+  return out;
+}
+function rangeOverlapsMonth(e, monthDate){
+  const ms = new Date(monthDate.getFullYear(), monthDate.getMonth(), 1);
+  const me = new Date(monthDate.getFullYear(), monthDate.getMonth()+1, 0);
+  const a = parseISO(e.start).getTime();
+  const b = parseISO(e.end).getTime();
+  return a <= me.getTime() && b >= ms.getTime();
+}
+function rangeCoversDate(e, iso){
+  const t = parseISO(iso).getTime();
+  return parseISO(e.start).getTime() <= t && t <= parseISO(e.end).getTime();
+}
+function splitRangeToWeekSegment(e, weekStartDate){
+  const ws = new Date(weekStartDate); ws.setHours(0,0,0,0);
+  const we = addDays(ws, 6);
+  const a = parseISO(e.start);
+  const b = parseISO(e.end);
+  const segStart = (a > ws) ? a : ws;
+  const segEnd   = (b < we) ? b : we;
+  if(segStart > segEnd) return null;
+  return { colStart: segStart.getDay(), colEnd: segEnd.getDay(), e };
+}
+function layoutBarsForWeek(rangeEvents, weekStartDate){
+  const segs = [];
+  for(const e of rangeEvents){
+    const seg = splitRangeToWeekSegment(e, weekStartDate);
+    if(seg) segs.push(seg);
+  }
+  segs.sort((x,y)=>{
+    if(x.colStart !== y.colStart) return x.colStart - y.colStart;
+    return (y.colEnd - y.colStart) - (x.colEnd - x.colStart);
+  });
+
+  const rowsEnd = [];
+  const placed = [];
+  for(const s of segs){
+    let rowIndex = -1;
+    for(let r=0;r<rowsEnd.length;r++){
+      if(s.colStart > rowsEnd[r]){ rowIndex = r; break; }
+    }
+    if(rowIndex === -1){
+      rowsEnd.push(-1);
+      rowIndex = rowsEnd.length-1;
+    }
+    rowsEnd[rowIndex] = s.colEnd;
+    placed.push({ rowIndex, seg:s });
+  }
+  return { rowsCount: rowsEnd.length, placed };
+}
+
+const VISIT_TODAY_ISO = toISODate(new Date());
+const EVENTS = clipEventsToRange(EVENTS_RAW);
+
+let state = {
+  mode: "month",
+  activeMonth: ymKey(clampToRange(new Date())),
+  dayStartISO: null,
+};
+
+function buildMonthKeys(){
+  const start = parseISO(RANGE_START);
+  const end = parseISO(RANGE_END);
+  const d = new Date(start.getFullYear(), start.getMonth(), 1);
+  const out = [];
+  while(d <= end){
+    out.push(ymKey(d));
+    d.setMonth(d.getMonth()+1);
+  }
+  return out;
+}
+const MONTH_KEYS = buildMonthKeys();
+
+function renderLeftControls(){
+  if(state.mode === "month"){
+    leftControls.innerHTML = `
+      <button class="btn" id="prevBtn">◀︎ 이전 달</button>
+      <button class="btn" id="todayBtn">◎ <span id="todayLabel"></span></button>
+      <button class="btn" id="nextBtn">다음 달 ▶︎</button>
+      <select id="monthSelect" title="월 선택"></select>
+    `;
+
+    document.getElementById("todayLabel").textContent = VISIT_TODAY_ISO;
+
+    const monthSelect = document.getElementById("monthSelect");
+    monthSelect.innerHTML = MONTH_KEYS.map(k=>{
+      const [y,m]=k.split("-");
+      return `<option value="${k}">${y}.${m}</option>`;
+    }).join("");
+    monthSelect.value = state.activeMonth;
+
+    document.getElementById("prevBtn").addEventListener("click", ()=>scrollToMonth(getPrevMonth(state.activeMonth)));
+    document.getElementById("nextBtn").addEventListener("click", ()=>scrollToMonth(getNextMonth(state.activeMonth)));
+    document.getElementById("todayBtn").addEventListener("click", ()=>{
+      const t = clampToRange(new Date());
+      const k = ymKey(new Date(t.getFullYear(), t.getMonth(), 1));
+      scrollToMonth(k);
+    });
+    monthSelect.addEventListener("change", (e)=>scrollToMonth(e.target.value));
+  } else {
+    const label = state.dayStartISO ? formatYMD(state.dayStartISO) : "";
+    leftControls.innerHTML = `
+      <div class="btn" style="cursor:default;">${label}</div>
+      <button class="btn" id="backBtn">↩ 돌아가기</button>
+    `;
+    document.getElementById("backBtn").addEventListener("click", ()=>{
+      setMode("month");
+    });
+  }
+}
+
+function getFilteredEventsForCalendar(){
+  const q = normalized(document.getElementById("globalSearch").value);
+  if(!q) return EVENTS.slice();
+  return EVENTS.filter(e=>{
+    const hay = isRangeEvent(e)
+      ? `${e.start} ${e.end} ${e.title}`.toLowerCase()
+      : `${e.date} ${e.title}`.toLowerCase();
+    return hay.includes(q);
+  });
+}
+
+function renderAllMonths(){
+  const filtered = getFilteredEventsForCalendar();
+
+  monthsRoot.innerHTML = MONTH_KEYS.map(k=>{
+    const [y,m] = k.split("-").map(Number);
+    const monthDate = new Date(y, m-1, 1);
+
+    return `
+      <section class="monthCard" id="m-${k}">
+        <div class="monthbar">
+          <div class="m">${escapeHtml(formatYM(monthDate))}</div>
+          <div style="color:var(--muted); font-size:11px;">스크롤로 다음 달 계속</div>
+        </div>
+        <div class="calendar">
+          <div class="dow">${DOW.map((d,idx)=>`<div class="${(idx===0 || idx===6) ? 'weekend' : ''}">${d}</div>`).join("")}</div>
+          <div class="weeks" data-month="${k}"></div>
+        </div>
+      </section>
+    `;
+  }).join("");
+
+  document.querySelectorAll('.weeks[data-month]').forEach(weeksEl=>{
+    const k = weeksEl.getAttribute("data-month");
+    const [y,m] = k.split("-").map(Number);
+    const cur = new Date(y, m-1, 1);
+    const gridStart = weekStartOf(cur);
+
+    const monthRanges = filtered.filter(e=> isRangeEvent(e) && rangeOverlapsMonth(e, cur));
+    const monthSingles = filtered.filter(e=> !isRangeEvent(e) && (e.date||"").startsWith(k));
+
+    const weeksHtml = [];
+    for(let w=0; w<6; w++){
+      const ws = addDays(gridStart, w*7);
+      const { rowsCount, placed } = layoutBarsForWeek(monthRanges, ws);
+
+      const barsHtml = `
+        <div class="bars" style="grid-template-rows: repeat(${rowsCount}, var(--bar-h));">
+          ${placed.map(p=>{
+            const gcStart = p.seg.colStart + 1;
+            const gcEnd = p.seg.colEnd + 2;
+            const gr = p.rowIndex + 1;
+            return `
+              <div class="bar" style="grid-column:${gcStart}/${gcEnd}; grid-row:${gr};" title="${escapeHtml(p.seg.e.title)}">
+                <span class="dot"></span>
+                <span class="txt">${escapeHtml(p.seg.e.title)}</span>
+              </div>
+            `;
+          }).join("")}
+        </div>
+      `;
+
+      let cellsHtml = "";
+      for(let c=0;c<7;c++){
+        const d = addDays(ws, c);
+        const iso = toISODate(d);
+        const inMonth = d.getMonth() === cur.getMonth();
+        const isWeekend = (d.getDay() === 0 || d.getDay() === 6);
+
+        const singles = monthSingles.filter(e=> e.date === iso);
+
+        const showMax = 3;
+        const show = singles.slice(0, showMax);
+        const remain = singles.length - show.length;
+
+        const items =
+          show.map(ev=>`
+            <div class="item" title="${escapeHtml(ev.title)}">
+              <span class="dot"></span>
+              <span class="t">${escapeHtml(ev.title)}</span>
+            </div>
+          `).join("") +
+          (remain>0 ? `
+            <div class="item" title="${escapeHtml(singles.slice(showMax).map(x=>x.title).join(" / "))}">
+              <span class="dot"></span>
+              <span class="t">+${remain}개 더</span>
+            </div>
+          ` : "");
+
+        const isToday = (iso === VISIT_TODAY_ISO);
+        const clickable = inRangeDate(iso) ? "" : " style='cursor:default; pointer-events:none; opacity:.55;'";
+
+        cellsHtml += `
+          <div class="cell ${inMonth ? "" : "muted"} ${isToday ? "today" : ""} ${isWeekend ? "weekend" : ""}" data-iso="${iso}" ${clickable}>
+            <div class="cellTop"><span class="dayNum">${d.getDate()}</span><span></span></div>
+            <div class="cellList">${items}</div>
+          </div>
+        `;
+      }
+
+      weeksHtml.push(`<div class="week" style="--bar-rows:${rowsCount};">${barsHtml}${cellsHtml}</div>`);
+    }
+
+    weeksEl.innerHTML = weeksHtml.join("");
+  });
+
+  document.querySelectorAll(".cell[data-iso]").forEach(cell=>{
+    cell.addEventListener("click", ()=>{
+      const iso = cell.getAttribute("data-iso");
+      if(!iso) return;
+      openDayViewFrom(iso);
+    });
+  });
+}
+
+function scrollToMonth(k){
+  const el = document.getElementById(`m-${k}`);
+  if(!el) return;
+  el.scrollIntoView({ behavior:"smooth", block:"start" });
+  state.activeMonth = k;
+  const monthSelect = document.getElementById("monthSelect");
+  if(monthSelect) monthSelect.value = k;
+}
+function getPrevMonth(k){
+  const idx = MONTH_KEYS.indexOf(k);
+  return MONTH_KEYS[Math.max(0, idx-1)];
+}
+function getNextMonth(k){
+  const idx = MONTH_KEYS.indexOf(k);
+  return MONTH_KEYS[Math.min(MONTH_KEYS.length-1, idx+1)];
+}
+
+const io = new IntersectionObserver((entries)=>{
+  if(state.mode !== "month") return;
+  const visible = entries
+    .filter(e=>e.isIntersecting)
+    .sort((a,b)=>b.intersectionRatio - a.intersectionRatio)[0];
+  if(!visible) return;
+  const id = visible.target.id;
+  const k = id.replace("m-","");
+  state.activeMonth = k;
+  const monthSelect = document.getElementById("monthSelect");
+  if(monthSelect) monthSelect.value = k;
+}, { root:null, threshold:[0.35, 0.5, 0.65] });
+
+function observeMonths(){
+  document.querySelectorAll('.monthCard').forEach(el=>io.observe(el));
+}
+
+const modalOverlay = document.getElementById("modalOverlay");
+const modalList = document.getElementById("modalList");
+const modalTitle = document.getElementById("modalTitle");
+const modalHint = document.getElementById("modalHint");
+
+function expandToListItems(events){
+  const out = [];
+  for(const e of events){
+    if(isRangeEvent(e)){
+      out.push({ type:"range", date:e.start, label:`${e.start} ~ ${e.end}`, title:e.title, jump: e.start.slice(0,7) });
+    }else{
+      out.push({ type:"single", date:e.date, label:e.date, title:e.title, jump: e.date.slice(0,7) });
+    }
+  }
+  out.sort((a,b)=>{
+    if(a.date !== b.date) return a.date.localeCompare(b.date);
+    return a.title.localeCompare(b.title, "ko");
+  });
+  return out;
+}
+
+function openModalWithList(items, titleText, hintText){
+  modalTitle.textContent = titleText;
+  modalHint.textContent = hintText;
+
+  if(items.length === 0){
+    modalList.innerHTML = `<div style="color:var(--muted); font-size:12px; padding:8px 2px;">결과가 없습니다.</div>`;
+  }else{
+    modalList.innerHTML = items.map(it=>{
+      const k = it.jump;
+      return `
+        <div class="resultRow">
+          <div class="left">
+            <div class="date">${escapeHtml(it.label)}</div>
+            <div class="name">${escapeHtml(it.title)}</div>
+          </div>
+          <div class="tag">
+            <button class="linkBtn" data-jump="${escapeHtml(k)}">월로 이동</button>
+            <button class="linkBtn" data-day="${escapeHtml(it.date)}">일로 보기</button>
+          </div>
+        </div>
+      `;
+    }).join("");
+
+    modalList.querySelectorAll("[data-jump]").forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        const k = btn.getAttribute("data-jump");
+        closeModal();
+        if(state.mode !== "month") setMode("month");
+        scrollToMonth(k);
+      });
+    });
+    modalList.querySelectorAll("[data-day]").forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        const iso = btn.getAttribute("data-day");
+        closeModal();
+        openDayViewFrom(iso);
+      });
+    });
+  }
+
+  modalOverlay.classList.add("open");
+  modalOverlay.setAttribute("aria-hidden","false");
+  document.body.style.overflow = "hidden";
+}
+
+function closeModal(){
+  modalOverlay.classList.remove("open");
+  modalOverlay.setAttribute("aria-hidden","true");
+  document.body.style.overflow = "";
+}
+
+document.getElementById("openListBtn").addEventListener("click", ()=>{
+  const items = expandToListItems(EVENTS);
+  openModalWithList(items, "일정 리스트(전체)", "검색창 내용과 무관하게 전체 일정이 날짜 순으로 표시됩니다.");
+});
+document.getElementById("modalCloseBtn").addEventListener("click", closeModal);
+modalOverlay.addEventListener("click", (e)=>{ if(e.target === modalOverlay) closeModal(); });
+document.addEventListener("keydown", (e)=>{ if(e.key === "Escape") closeModal(); });
+document.getElementById("modalScrollTop").addEventListener("click", ()=>{
+  document.querySelector(".modalBody").scrollTo({top:0, behavior:"smooth"});
+});
+
+let searchDebounce = null;
+document.getElementById("globalSearch").addEventListener("input", ()=>{
+  clearTimeout(searchDebounce);
+  searchDebounce = setTimeout(()=>{
+    if(state.mode === "month") {
+      renderAllMonths();
+      observeMonths();
+    }
+
+    const q = normalized(document.getElementById("globalSearch").value);
+    if(!q){
+      closeModal();
+      return;
+    }
+
+    const filtered = getFilteredEventsForCalendar();
+    const items = expandToListItems(filtered);
+
+    openModalWithList(items, `검색 결과: "${q}"`, "2026.03.01 ~ 2027.02.19 범위에서 검색한 결과입니다.");
+  }, 150);
+});
+
+function eventsOnDay(iso){
+  const singles = EVENTS.filter(e=> !isRangeEvent(e) && e.date === iso);
+  const ranges = EVENTS.filter(e=> isRangeEvent(e) && rangeCoversDate(e, iso));
+  return { singles, ranges };
+}
+
+function openDayViewFrom(iso){
+  const t = clampToRange(parseISO(iso));
+  const clampedISO = toISODate(t);
+
+  state.dayStartISO = clampedISO;
+  setMode("day");
+  renderDayView();
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+
+function renderDayView(){
+  const start = parseISO(state.dayStartISO);
+  const end = parseISO(RANGE_END);
+
+  const blocks = [];
+  let cur = new Date(start);
+
+  while(cur <= end){
+    const iso = toISODate(cur);
+    const { singles, ranges } = eventsOnDay(iso);
+
+    if(singles.length || ranges.length){
+      const rows = [];
+
+      for(const r of ranges){
+        rows.push(`
+          <div class="dayRow">
+            <div class="left">
+              <div class="name">${escapeHtml(r.title)}</div>
+              <div class="meta">기간: ${escapeHtml(r.start)} ~ ${escapeHtml(r.end)}</div>
+            </div>
+          </div>
+        `);
+      }
+      for(const s of singles){
+        rows.push(`
+          <div class="dayRow">
+            <div class="left">
+              <div class="name">${escapeHtml(s.title)}</div>
+              <div class="meta">단일 일정</div>
+            </div>
+          </div>
+        `);
+      }
+
+      blocks.push(`
+        <div class="dayCard">
+          <div class="dayHeader">
+            <div class="d">${escapeHtml(formatYMD(cur))}</div>
+            <button class="linkBtn" data-jump-month="${escapeHtml(ymKey(cur))}">해당 월로</button>
+          </div>
+          <div class="dayList">
+            ${rows.join("")}
+          </div>
+        </div>
+      `);
+    }
+
+    cur = addDays(cur, 1);
+  }
+
+  dayRoot.innerHTML = `
+    <div class="dayWrap">
+      ${blocks.length ? blocks.join("") : `
+        <div class="dayCard">
+          <div class="dayHeader"><div class="d">${escapeHtml(formatYMD(state.dayStartISO))}</div></div>
+          <div class="dayList" style="color:var(--muted); font-size:12px;">이 날짜 이후(범위 내)에 표시할 일정이 없습니다.</div>
+        </div>
+      `}
+    </div>
+  `;
+
+  dayRoot.querySelectorAll("[data-jump-month]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const k = btn.getAttribute("data-jump-month");
+      setMode("month");
+      scrollToMonth(k);
+    });
+  });
+}
+
+function setMode(mode){
+  state.mode = mode;
+  if(mode === "month"){
+    monthsRoot.style.display = "";
+    dayRoot.style.display = "none";
+    renderLeftControls();
+    renderAllMonths();
+    observeMonths();
+    scrollToMonth(state.activeMonth);
+  } else {
+    monthsRoot.style.display = "none";
+    dayRoot.style.display = "";
+    renderLeftControls();
+  }
+}
+
+document.getElementById("printBtn").addEventListener("click", ()=>window.print());
+
+function init(){
+  renderLeftControls();
+  renderAllMonths();
+  observeMonths();
+  scrollToMonth(state.activeMonth);
+}
+init();
+</script>
+</body>
+</html>
+
+
+
+
+
+
+
